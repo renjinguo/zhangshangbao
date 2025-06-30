@@ -1,0 +1,12 @@
+// 创建.gitignore文件内容
+/node_modules/
+*.env
+.env
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.DS_Store
+Thumbs.db
+.vscode/
+idea/
