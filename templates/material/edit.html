@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>编辑物料</h2>
+    <form method="POST" action="{{ url_for('material.edit_material', id=material.id) }}">
+        <div class="form-group">
+            <label for="code">物料编码</label>
+            <input type="text" class="form-control" id="code" name="code" value="{{ material.code }}" required>
+        </div>
+        <div class="form-group">
+            <label for="name">物料名称</label>
+            <input type="text" class="form-control" id="name" name="name" value="{{ material.name }}" required>
+        </div>
+        <div class="form-group">
+            <label for="spec">规格型号</label>
+            <input type="text" class="form-control" id="spec" name="spec" value="{{ material.spec }}">
+        </div>
+        <div class="form-group">
+            <label for="unit">单位</label>
+            <input type="text" class="form-control" id="unit" name="unit" value="{{ material.unit }}">
+        </div>
+        <button type="submit" class="btn btn-primary">保存</button>
+        <a href="{{ url_for('material.list_materials') }}" class="btn btn-secondary">取消</a>
+    </form>
+</div>
+{% endblock %}

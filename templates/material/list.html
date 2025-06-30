@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>物料列表</h2>
+    <a href="{{ url_for('material.create_material') }}" class="btn btn-primary mb-3">新增物料</a>
+    
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>编码</th>
+                <th>名称</th>
+                <th>规格</th>
+                <th>单位</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for material in materials %}
+            <tr>
+                <td>{{ material.code }}</td>
+                <td>{{ material.name }}</td>
+                <td>{{ material.spec }}</td>
+                <td>{{ material.unit }}</td>
+                <td>
+                    <a href="{{ url_for('material.edit_material', id=material.id) }}" class="btn btn-sm btn-warning">编辑</a>
+                    <form action="{{ url_for('material.delete_material', id=material.id) }}" method="POST" style="display: inline;">
+                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('确定删除此物料吗？')">删除</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
