@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}员工管理 - 掌上宝{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h2 class="mb-4">员工列表</h2>
+        <table class="table table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>姓名</th>
+                    <th>职位</th>
+                    <th>部门</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for employee in employees %}
+                <tr>
+                    <td>{{ employee.name }}</td>
+                    <td>{{ employee.position }}</td>
+                    <td>{{ employee.department }}</td>
+                    <td>
+                        <a href="/employee/edit/{{ employee.id }}" class="btn btn-sm btn-primary">编辑</a>
+                        <a href="/employee/delete/{{ employee.id }}" class="btn btn-sm btn-danger">删除</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <a href="/employee/add" class="btn btn-success">添加新员工</a>
+    </div>
+</div>
+{% endblock %}

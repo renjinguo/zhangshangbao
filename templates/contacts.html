@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}通讯录 - 掌上宝{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="fw-bold text-primary">通讯录</h2>
+    <a href="{{ url_for('add_contact') }}" class="btn btn-success rounded-pill px-4 fw-semibold">
+        <i class="bi bi-person-plus"></i> 添加联系人
+    </a>
+</div>
+<div class="table-responsive">
+<table class="table table-hover align-middle">
+    <thead class="table-light">
+        <tr>
+            <th>头像</th>
+            <th>用户名</th>
+            <th>姓名</th>
+            <th>电话</th>
+            <th>邮箱</th>
+            <th>部门</th>
+            <th>备注</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for c in contacts %}
+        <tr>
+            <td><div class="avatar">{{ c.name[0] }}</div></td>
+            <td>{{ c.username }}</td>
+            <td>{{ c.name }}</td>
+            <td>{{ c.phone }}</td>
+            <td>{{ c.email }}</td>
+            <td>{{ c.department }}</td>
+            <td>{{ c.remark }}</td>
+            <td>
+                <a href="{{ url_for('edit_contact', contact_id=c.id) }}" class="btn btn-sm btn-primary rounded-pill px-3 fw-semibold">编辑</a>
+                <form action="{{ url_for('delete_contact', contact_id=c.id) }}" method="post" class="inline-form d-inline" onsubmit="return confirm('确定要删除该联系人吗？');">
+                    <button type="submit" class="btn btn-sm btn-danger rounded-pill px-3 fw-semibold">删除</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+{% if not contacts %}
+<p class="text-muted">暂无联系人。</p>
+{% endif %}
+<style>
+.inline-form {
+    display: inline-block;
+}
+</style>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}部门管理 - 掌上宝{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h2 class="mb-4">部门列表</h2>
+        <table class="table table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>部门名称</th>
+                    <th>描述</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for department in departments %}
+                <tr>
+                    <td>{{ department.name }}</td>
+                    <td>{{ department.description }}</td>
+                    <td>
+                        <a href="/department/edit/{{ department.id }}" class="btn btn-sm btn-primary">编辑</a>
+                        <a href="/department/delete/{{ department.id }}" class="btn btn-sm btn-danger">删除</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <a href="/department/add" class="btn btn-success">添加新部门</a>
+    </div>
+</div>
+{% endblock %}

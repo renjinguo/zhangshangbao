@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+
+{% block title %}首页 - 掌上宝{% endblock %}
+
+{% block content %}
+<style>
+.dashboard-icon-lg {
+    font-size: 1.5rem;
+}
+.dashboard-icon {
+    font-size: 1.5rem;
+}
+.dashboard-bar-chart-icon {
+    font-size: 1.5rem;
+}
+.dashboard-gear-icon-lg {
+    font-size: 1.5rem;
+}
+.icon-1-5rem {
+    font-size: 1.5rem;
+}
+</style>
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3">欢迎来到掌上宝</h1>
+        <a href="/dashboard" class="btn btn-primary">
+            <i class="bi bi-speedometer2"></i> 进入控制台
+        </a>
+    </div>
+
+    <!-- 面包屑导航 -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item active" aria-current="page">首页</li>
+        </ol>
+    </nav>
+
+                    <i class="bi bi-people-fill text-primary dashboard-icon"></i>
+    <div class="dashboard-cards row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 mb-4">
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="p-3 me-3 bg-primary bg-opacity-10 rounded-circle">
+                            <i class="bi bi-people-fill text-primary icon-lg"></i>
+                        </div>
+                        <h5 class="card-title mb-0">用户管理</h5>
+                    </div>
+                    <p class="card-text">管理平台用户信息</p>
+                    <a href="/users" class="btn btn-outline-primary btn-sm mt-auto">
+                        <i class="bi bi-arrow-right"></i> 查看详情
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="p-3 me-3 bg-success bg-opacity-10 rounded-circle">
+                            <i class="bi bi-cart-fill text-success icon-lg"></i>
+                        </div>
+                        <h5 class="card-title mb-0">订单管理</h5>
+                    </div>
+                    <p class="card-text">查看和处理订单</p>
+                    <a href="/orders" class="btn btn-outline-success btn-sm mt-auto">
+                        <i class="bi bi-arrow-right"></i> 查看详情
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="p-3 me-3 bg-warning bg-opacity-10 rounded-circle">
+                            <i class="bi bi-gear-fill text-warning icon-lg"></i>
+                        </div>
+                        <h5 class="card-title mb-0">系统设置</h5>
+                    </div>
+                    <p class="card-text">配置系统参数</p>
+                    <a href="/settings" class="btn btn-outline-warning btn-sm mt-auto">
+                        <i class="bi bi-arrow-right"></i> 查看详情
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="p-3 me-3 bg-info bg-opacity-10 rounded-circle">
+                            <i class="bi bi-bar-chart-line-fill text-info icon-lg"></i>
+                        </div>
+                        <h5 class="card-title mb-0">数据分析</h5>
+                    </div>
+                    <p class="card-text">查看业务数据报表</p>
+                    <a href="/reports" class="btn btn-outline-info btn-sm mt-auto">
+                        <i class="bi bi-arrow-right"></i> 查看详情
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 最近活动 -->
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">最近活动</h5>
+            <a href="#" class="btn btn-link p-0">
+                查看全部 <i class="bi bi-arrow-right"></i>
+            </a>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th scope="col">时间</th>
+                            <th scope="col">操作</th>
+                            <th scope="col">详情</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>10分钟前</td>
+                            <td>登录</td>
+                            <td>成功登录系统</td>
+                        </tr>
+                        <tr>
+                            <td>30分钟前</td>
+                            <td>更新</td>
+                            <td>修改了用户资料</td>
+                        </tr>
+                        <tr>
+                            <td>1小时前</td>
+                            <td>创建</td>
+                            <td>新增了一个订单</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,287 @@
+{% extends "base.html" %}
+{% block title %}与{{ target.name }}聊天 - 掌上宝{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        <div class="list-group mb-3 shadow-sm p-2 bg-white rounded-3">
+            {% for c in contacts %}
+            <a href="{{ url_for('chat_with', contact_id=c.id) }}" class="list-group-item list-group-item-action {% if c.id == target.id %}active{% endif %} d-flex justify-content-between align-items-center gap-2">
+                <div class="avatar">
+                    {% if c.avatar %}
+                        <img src="{{ c.avatar }}" alt="头像">
+                    {% else %}
+                        {{ c.name[0] }}
+                    {% endif %}
+                </div>
+                <span class="fw-semibold">{{ c.name }}</span>
+                {% if unread_counts[c.id] > 0 %}
+                <span class="badge bg-danger rounded-pill ms-2">{{ unread_counts[c.id] }}</span>
+                {% endif %}
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="col-md-8 chat-main-area">
+        <div class="border rounded chat-messages-container mb-2 bg-white shadow-sm position-relative">
+            <!-- 消息搜索功能 -->
+            <div class="chat-search">
+                <div class="input-group input-group-sm">
+                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+                    <input type="text" class="form-control" placeholder="搜索消息...">
+                </div>
+            </div>
+            
+            <!-- 聊天设置按钮 -->
+            <button type="button" class="chat-settings-btn" title="聊天设置">
+                <i class="bi bi-gear-fill"></i>
+            </button>
+            
+            <!-- 消息列表 -->
+            <div id="chat-messages" class="chat-messages-list">
+                {% for m in messages %}
+                <div class="message-row {% if m.sender_id == sender_id %}justify-content-end{% else %}justify-content-start{% endif %} message-item" data-id="{{ m.id }}">
+                    <div class="message-avatar avatar" title="{{ m.sender.name }}">
+                        {% if m.sender.avatar %}
+                            <img src="{{ m.sender.avatar }}" alt="头像">
+                        {% else %}
+                            {{ m.sender.name[0] }}
+                        {% endif %}
+                    </div>
+                    <div class="message-bubble {% if m.sender_id == sender_id %}me{% else %}other{% endif %} message-bubble">
+                        {% if m.is_recalled %}
+                            <span class="text-muted">消息已撤回</span>
+                        {% else %}
+                            <div>
+                                {% if m.content %}<span>{{ m.content }}</span>{% endif %}
+                                {% if m.file_path and m.file_type == 'image' %}
+                                    <a href="/{{ m.file_path }}" target="_blank"><img src="/{{ m.file_path }}" alt="图片" class="chat-img"></a>
+                                {% elif m.file_path %}
+                                    <a href="/{{ m.file_path }}" target="_blank" class="ms-2">[文件]</a>
+                                {% endif %}
+                            </div>
+                            <div class="message-meta">
+                                {{ m.sender.name }} {{ m.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}
+                                {% if m.sender_id == sender_id %}
+                                    {% if m.is_read %}<span class="text-success ms-2">对方已读</span>{% else %}<span class="text-secondary ms-2">对方未读</span>{% endif %}
+                                    {% if not m.is_recalled %}
+                                    <button type="button" class="btn btn-link text-danger p-0 ms-2 recall-btn" title="撤回消息" {% if m.is_read %}disabled{% endif %}>
+                                        <i class="bi bi-x-circle"></i>
+                                    </button>
+                                    {% endif %}
+                                    <!-- 消息状态指示 -->
+                                    <span class="message-status {% if m.is_read %}read{% elif m.is_delivered %}delivered{% else %}sent{% endif %}"></span>
+                                {% endif %}
+                            </div>
+                            <!-- 消息反应 -->
+                            <div class="message-reactions">
+                                <button class="message-reaction">👍</button>
+                                <button class="message-reaction">❤️</button>
+                                <button class="message-reaction">😄</button>
+                                <button class="message-reaction">👀</button>
+                            </div>
+                        {% endif %}
+                        <!-- 消息操作按钮 -->
+                        <div class="message-actions">
+                            {% if m.sender_id == sender_id and not m.is_recalled %}
+                                {% if not m.is_read %}
+                                <button type="button" class="btn btn-sm btn-outline-danger recall-single-btn" data-id="{{ m.id }}">
+                                    <i class="bi bi-x-circle"></i> 撤回
+                                </button>
+                                {% endif %}
+                                <button type="button" class="btn btn-sm btn-outline-secondary copy-btn" data-text="{{ m.content }}" title="复制消息">
+                                    <i class="bi bi-clipboard"></i>
+                                </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                {% if not messages %}
+                <div class="text-muted">暂无消息。</div>
+                {% endif %}
+            </div>
+            <!-- 消息撤回提示区域 -->
+            <div id="recall-notification" class="recall-notification d-none">
+                已撤回最后一条消息，您还有10秒可以编辑或删除此消息
+            </div>
+        </div>
+        
+        <!-- 文件拖拽上传区域 -->
+        <form method="post" enctype="multipart/form-data" class="chat-input-area mt-auto" id="chatForm">
+            <div class="drop-zone mb-2" id="dropZone">
+                <i class="bi bi-cloud-upload fs-3 text-muted"></i>
+                <label for="fileInput" class="text-muted ms-2">拖放文件到此处上传，或点击选择文件</label>
+                <input type="file" id="fileInput" name="file" class="form-control d-none" title="选择要发送的文件">
+            </div>
+            <div class="input-group">
+                <textarea class="form-control" name="content" rows="1" placeholder="输入消息..." id="msgInput"></textarea>
+                <button type="button" class="btn btn-outline-primary px-3" id="fileSelectBtn" title="选择文件">
+                    <i class="bi bi-paperclip"></i>
+                </button>
+                <button type="submit" class="btn btn-primary px-4 fw-semibold">发送</button>
+            </div>
+            <div class="mt-2">
+                <span>表情：</span>
+                <button type="button" class="btn btn-light btn-sm emoji-btn">😄</button>
+                <button type="button" class="btn btn-light btn-sm emoji-btn">😂</button>
+                <button type="button" class="btn btn-light btn-sm emoji-btn">😢</button>
+                <button type="button" class="btn btn-light btn-sm emoji-btn">👍</button>
+                <button type="button" class="btn btn-light btn-sm emoji-btn">❤️</button>
+            </div>
+            <a href="{{ url_for('chat') }}" class="btn btn-link mt-2">返回联系人列表</a>
+        </form>
+    </div>
+</div>
+<!-- 撤回确认对话框 -->
+<div class="recall-confirm" id="recallConfirm">
+    <h6 class="mb-3">确定要撤回这条消息吗？</h6>
+    <button type="button" class="btn btn-primary btn-sm" id="confirmRecallBtn">确认</button>
+    <button type="button" class="btn btn-secondary btn-sm" id="cancelRecallBtn">取消</button>
+</div>
+<script>
+// 在DOM加载完成后执行初始化
+document.addEventListener('DOMContentLoaded', function() {
+    // 获取所有需要的元素
+    var chatBox = document.getElementById('chat-messages');
+    if(chatBox) chatBox.scrollTop = chatBox.scrollHeight;
+    
+    // 初始化文件拖拽功能
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    
+    // 拖拽事件处理
+    if(dropZone && fileInput) {
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+        
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('dragover');
+        });
+        
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            if(e.dataTransfer.files.length > 0) {
+                fileInput.files = e.dataTransfer.files;
+                // 可以在这里添加文件预览功能
+            }
+        });
+    }
+    
+    // 点击选择文件按钮
+    const fileSelectBtn = document.getElementById('fileSelectBtn');
+    if(fileInput && fileSelectBtn) {
+        fileSelectBtn.addEventListener('click', () => {
+            fileInput.click();
+        });
+    }
+    
+    // 消息撤回倒计时通知
+    let recallTimeout;
+    Array.from(document.getElementsByClassName('recall-btn')).forEach(function(btn){
+        btn.onclick = function(){
+            if(confirm('确定撤回该消息？')){
+                fetch('/chat/recall/' + btn.dataset.id, {method:'POST'})
+                .then(r=>r.json()).then(data=>{
+                    if(data.success) location.reload();
+                });
+            }
+        }
+    });
+    
+    // 撤回通知显示逻辑
+    document.getElementById('msgInput').addEventListener('focus', () => {
+        const notification = document.getElementById('recall-notification');
+        if(notification && notification.classList.contains('d-none')) {
+            notification.classList.remove('d-none');
+            setTimeout(() => {
+                notification.classList.add('d-none');
+            }, 10000);
+        }
+    });
+    
+    // 消息反应功能
+    Array.from(document.getElementsByClassName('message-reaction')).forEach(function(btn){
+        btn.addEventListener('click', function() {
+            this.classList.toggle('active');
+            // 这里可以添加向服务器发送反应数据的逻辑
+        });
+    });
+    
+    // 消息撤回新功能
+    const recallConfirm = document.getElementById('recallConfirm');
+    let currentMessageId = null;
+    
+    // 处理单个消息撤回按钮点击
+    Array.from(document.getElementsByClassName('recall-single-btn')).forEach(function(btn){
+        btn.addEventListener('click', function() {
+            currentMessageId = this.dataset.id;
+            recallConfirm.style.display = 'block';
+            // 5秒后自动隐藏确认框
+            setTimeout(() => {
+                if (recallConfirm.style.display === 'block') {
+                    recallConfirm.style.display = 'none';
+                }
+            }, 5000);
+        });
+    });
+    
+    // 确认撤回按钮点击
+    document.getElementById('confirmRecallBtn').addEventListener('click', function() {
+        if(currentMessageId) {
+            fetch(`/chat/recall/${currentMessageId}`, {method: 'POST'})
+                .then(response => response.json())
+                .then(data => {
+                    if(data.success) {
+                        location.reload();
+                    } else {
+                        alert('撤回失败：' + data.message);
+                    }
+                });
+        }
+    });
+    
+    // 取消撤回按钮点击
+    document.getElementById('cancelRecallBtn').addEventListener('click', function() {
+        recallConfirm.style.display = 'none';
+        currentMessageId = null;
+    });
+    
+    // 点击其他地方关闭撤回确认框
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.recall-single-btn') && !e.target.closest('.recall-confirm')) {
+            recallConfirm.style.display = 'none';
+            currentMessageId = null;
+        }
+    });
+});
+
+// 表情选择功能
+Array.from(document.getElementsByClassName('emoji-btn')).forEach(function(btn){
+    btn.onclick = function(){
+        var input = document.getElementById('msgInput');
+        input.value += btn.textContent;
+        input.focus();
+    }
+});
+
+// 回车发送，Shift+Enter换行
+var msgInput = document.getElementById('msgInput');
+if(msgInput) {
+    msgInput.addEventListener('keydown', function(e) {
+        if(e.key === 'Enter') {
+            if(e.shiftKey) {
+                // 允许换行
+                return;
+            } else {
+                e.preventDefault();
+                // 触发表单的原生提交，保证文件能被上传
+                document.getElementById('chatForm').requestSubmit();
+            }
+        }
+    });
+}
+</script>
+{% endblock %}

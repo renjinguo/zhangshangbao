@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}公司信息 - 掌上宝{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h2 class="mb-4">公司信息</h2>
+        <table class="table table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>公司名称</th>
+                    <th>地址</th>
+                    <th>电话</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ company.name }}</td>
+                    <td>{{ company.address }}</td>
+                    <td>{{ company.phone }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

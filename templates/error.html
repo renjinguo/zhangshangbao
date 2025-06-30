@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}错误 - 掌上宝{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card text-center">
+                <div class="card-body py-5">
+                    <i class="bi bi-exclamation-triangle-fill text-warning error-icon"></i>
+                    <h1 class="display-5 fw-bold mt-3 mb-4">发生错误</h1>
+                    <p class="lead mb-4">抱歉，页面发生了意外错误。请尝试以下操作：</p>
+                    
+                    <ul class="list-unstyled mb-4">
+                        <li class="mb-2"><i class="bi bi-arrow-return-right me-2"></i> 返回上一页</li>
+                        <li class="mb-2"><i class="bi bi-house-door me-2"></i> 返回首页</li>
+                        <li><i class="bi bi-envelope me-2"></i> 联系管理员</li>
+                    </ul>
+                    
+                    <div class="d-flex gap-3 justify-content-center mt-4">
+                        <a href="javascript:history.back()" class="btn btn-outline-primary">
+                            <i class="bi bi-arrow-left"></i> 返回上一页
+                        </a>
+                        <a href="/index" class="btn btn-primary">
+                            <i class="bi bi-house"></i> 返回首页
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}{{ '添加联系人' if action=='add' else '编辑联系人' }} - 掌上宝{% endblock %}
+{% block content %}
+<h2>{{ '添加联系人' if action=='add' else '编辑联系人' }}</h2>
+<form method="post">
+    <div class="mb-3">
+        <label for="username" class="form-label">用户名</label>
+        <input type="text" class="form-control" id="username" name="username" required value="{{ contact.username if contact else '' }}">
+    </div>
+    <div class="mb-3">
+        <label for="name" class="form-label">姓名</label>
+        <input type="text" class="form-control" id="name" name="name" required value="{{ contact.name if contact else '' }}">
+    </div>
+    <div class="mb-3">
+        <label for="phone" class="form-label">电话</label>
+        <input type="text" class="form-control" id="phone" name="phone" value="{{ contact.phone if contact else '' }}">
+    </div>
+    <div class="mb-3">
+        <label for="email" class="form-label">邮箱</label>
+        <input type="email" class="form-control" id="email" name="email" value="{{ contact.email if contact else '' }}">
+    </div>
+    <div class="mb-3">
+        <label for="department" class="form-label">部门</label>
+        <input type="text" class="form-control" id="department" name="department" value="{{ contact.department if contact else '' }}">
+    </div>
+    <div class="mb-3">
+        <label for="remark" class="form-label">备注</label>
+        <input type="text" class="form-control" id="remark" name="remark" value="{{ contact.remark if contact else '' }}">
+    </div>
+    <div class="mb-3">
+        <label for="password" class="form-label">{{ '设置密码' if action=='add' else '修改密码（留空则不变）' }}</label>
+        <input type="password" class="form-control" id="password" name="password" {% if action=='add' %}required{% endif %}>
+    </div>
+    <button type="submit" class="btn btn-primary">{{ '添加' if action=='add' else '保存' }}</button>
+    <a href="{{ url_for('contacts') }}" class="btn btn-secondary ms-2">返回</a>
+</form>
+{% endblock %}

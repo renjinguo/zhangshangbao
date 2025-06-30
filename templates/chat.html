@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}即时通讯 - 掌上宝{% endblock %}
+{% block content %}
+<h2 class="fw-bold text-primary mb-4">即时通讯</h2>
+<div class="row">
+    <div class="col-md-4">
+        <div class="list-group shadow-sm p-2 bg-white rounded-3">
+            {% for c in contacts %}
+            <a href="{{ url_for('chat_with', contact_id=c.id) }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center gap-2">
+                <div class="avatar">
+                    {% if c.avatar %}
+                        <img src="{{ c.avatar }}" alt="头像">
+                    {% else %}
+                        {{ c.name[0] }}
+                    {% endif %}
+                </div>
+                <span class="fw-semibold">{{ c.name }}</span>
+                {% if unread_counts[c.id] > 0 %}
+                <span class="badge bg-danger rounded-pill">{{ unread_counts[c.id] }}</span>
+                {% endif %}
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="col-md-8 d-flex align-items-center justify-content-center">
+        <p class="text-muted fs-5">请选择联系人进行聊天。</p>
+    </div>
+</div>
+{% endblock %}

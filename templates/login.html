@@ -1,0 +1,31 @@
+{% extends "login_base.html" %}
+
+{% block title %}登录 - 掌上宝{% endblock %}
+
+{% block content %}
+<div class="container d-flex align-items-center justify-content-center min-vh-100 bg-light">
+    <div class="w-100 login-max-width">
+        <div class="card shadow-sm border-0">
+            <div class="card-body text-center">
+                <h1 class="h4 mb-4 text-primary fw-bold">用户登录</h1>
+                <!-- 登录表单 -->
+                <form action="/login" method="post">
+                    <div class="mb-3">
+                        <label for="username" class="form-label visually-hidden">用户名</label>
+                        <input type="text" class="form-control form-control-lg" id="username" name="username" placeholder="用户名" required aria-required="true" autocomplete="username">
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label visually-hidden">密码</label>
+                        <input type="password" class="form-control form-control-lg" id="password" name="password" placeholder="密码" required aria-required="true" autocomplete="current-password">
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg rounded-pill fw-semibold">
+                            登录
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
