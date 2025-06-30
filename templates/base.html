@@ -45,50 +45,68 @@
             <div class="col-md-3 col-xl-2 d-none d-md-block sidebar">
                 <div class="position-sticky">
                     <ul class="nav flex-column mb-4">
+                        <!-- 我的工作台 -->
                         <li class="nav-item">
-                            <a class="nav-link" href="/chat">
-                                <i class="bi bi-chat-dots"></i> 即时通讯
+                            <a class="nav-link collapsed" data-bs-toggle="collapse" href="#workbenchCollapse">
+                                <i class="bi bi-speedometer2"></i> 我的工作台
+                                <i class="bi bi-chevron-down ms-auto"></i>
                             </a>
+                            <div class="collapse show" id="workbenchCollapse">
+                                <ul class="nav flex-column ms-3">
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="/chat">
+                                            <i class="bi bi-chat-dots"></i> 即时通讯
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="/contacts">
+                                            <i class="bi bi-people"></i> 通讯录
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
                         </li>
+                        
+                        <!-- 主数据管理 -->
                         <li class="nav-item">
-                            <a class="nav-link" href="/contacts">
-                                <i class="bi bi-people"></i> 通讯录
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">
+                            <a class="nav-link collapsed" data-bs-toggle="collapse" href="#masterDataCollapse">
                                 <i class="bi bi-database"></i> 主数据管理
+                                <i class="bi bi-chevron-down ms-auto"></i>
                             </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <i class="bi bi-box-seam"></i> 物料主数据
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <i class="bi bi-people"></i> 人力主数据
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <i class="bi bi-person-badge"></i> 客户主数据
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <i class="bi bi-truck"></i> 供应商主数据
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <i class="bi bi-building"></i> 公司主数据
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <i class="bi bi-diagram-3"></i> 部门主数据
-                            </a>
+                            <div class="collapse" id="masterDataCollapse">
+                                <ul class="nav flex-column ms-3">
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="#">
+                                            <i class="bi bi-box-seam"></i> 物料主数据
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="#">
+                                            <i class="bi bi-people"></i> 人力主数据
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="#">
+                                            <i class="bi bi-person-badge"></i> 客户主数据
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="#">
+                                            <i class="bi bi-truck"></i> 供应商主数据
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="#">
+                                            <i class="bi bi-building"></i> 公司主数据
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="#">
+                                            <i class="bi bi-diagram-3"></i> 部门主数据
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
                         </li>
                     </ul>
                 </div>
