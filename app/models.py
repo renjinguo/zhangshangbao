@@ -37,3 +37,27 @@ class Material(db.Model):
     name = db.Column(db.String(80), nullable=False)
     spec = db.Column(db.String(80))
     unit = db.Column(db.String(20))
+
+class Department(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    code = db.Column(db.String(50), unique=True, nullable=False)
+    name = db.Column(db.String(100), nullable=False)
+    manager = db.Column(db.String(64))
+    phone = db.Column(db.String(32))
+    created_at = db.Column(db.DateTime, server_default=db.func.now())
+    updated_at = db.Column(db.DateTime, server_default=db.func.now(), onupdate=db.func.now())
+
+class Employee(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    employee_id = db.Column(db.String(50), unique=True, nullable=False)
+    name = db.Column(db.String(80), nullable=False)
+    department_id = db.Column(db.Integer, db.ForeignKey('department.id'))
+    position = db.Column(db.String(80))
+    hire_date = db.Column(db.Date)
+    phone = db.Column(db.String(20))
+    email = db.Column(db.String(120))
+    status = db.Column(db.String(20), default='active')
+    created_at = db.Column(db.DateTime, server_default=db.func.now())
+    updated_at = db.Column(db.DateTime, server_default=db.func.now(), onupdate=db.func.now())
+
+    department = db.relationship('Department', backref='employees')

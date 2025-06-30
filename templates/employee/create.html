@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>添加员工</h2>
+    <form method="POST" action="{{ url_for('create_employee') }}">
+        <div class="form-group">
+            <label for="employee_id">员工ID</label>
+            <input type="text" class="form-control" id="employee_id" name="employee_id" required>
+        </div>
+        <div class="form-group">
+            <label for="name">姓名</label>
+            <input type="text" class="form-control" id="name" name="name" required>
+        </div>
+        <div class="form-group">
+            <label for="department_id">部门</label>
+            <select class="form-control" id="department_id" name="department_id" required>
+                {% for department in departments %}
+                <option value="{{ department.id }}">{{ department.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="position">职位</label>
+            <input type="text" class="form-control" id="position" name="position">
+        </div>
+        <div class="form-group">
+            <label for="hire_date">入职日期</label>
+            <input type="date" class="form-control" id="hire_date" name="hire_date">
+        </div>
+        <div class="form-group">
+            <label for="phone">电话</label>
+            <input type="tel" class="form-control" id="phone" name="phone">
+        </div>
+        <div class="form-group">
+            <label for="email">邮箱</label>
+            <input type="email" class="form-control" id="email" name="email">
+        </div>
+        <div class="form-group">
+            <label for="status">状态</label>
+            <select class="form-control" id="status" name="status">
+                <option value="active">在职</option>
+                <option value="inactive">离职</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">保存</button>
+        <a href="{{ url_for('list_employees') }}" class="btn btn-secondary">取消</a>
+    </form>
+</div>
+{% endblock %}

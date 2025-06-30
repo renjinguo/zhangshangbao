@@ -1,5 +1,5 @@
 from flask import render_template, request, redirect, url_for, flash, jsonify, session, current_app
-from .models import db, User, Message
+from .models import db, User, Message, Department, Material, Employee
 import os
 from werkzeug.utils import secure_filename
 import re
@@ -177,3 +177,167 @@ def init_app(app):
         msg.is_recalled = True
         db.session.commit()
         return jsonify({'success': True})
+
+    # 部门管理路由
+    @app.route('/departments')
+    def list_departments():
+        departments = Department.query.order_by(Department.code).all()
+        return render_template('department/list.html', departments=departments)
+
+    @app.route('/departments/create', methods=['GET', 'POST'])
+    def create_department():
+        if request.method == 'POST':
+            code = request.form['code']
+            name = request.form['name']
+            manager = request.form.get('manager', '')
+            phone = request.form.get('phone', '')
+            
+            if Department.query.filter_by(code=code).first():
+                flash('部门编码已存在', 'danger')
+                return redirect(url_for('create_department'))
+                
+            department = Department(code=code, name=name, manager=manager, phone=phone)
+            db.session.add(department)
+            db.session.commit()
+            flash('部门创建成功', 'success')
+            return redirect(url_for('list_departments'))
+            
+        return render_template('department/create.html')
+
+    @app.route('/departments/<int:id>/edit', methods=['GET', 'POST'])
+    def edit_department(id):
+        department = Department.query.get_or_404(id)
+        if request.method == 'POST':
+            department.code = request.form['code']
+            department.name = request.form['name']
+            department.manager = request.form.get('manager', '')
+            department.phone = request.form.get('phone', '')
+            db.session.commit()
+            flash('部门信息已更新', 'success')
+            return redirect(url_for('list_departments'))
+        return render_template('department/edit.html', department=department)
+
+    @app.route('/departments/<int:id>/delete', methods=['POST'])
+    def delete_department(id):
+        department = Department.query.get_or_404(id)
+        db.session.delete(department)
+        db.session.commit()
+        flash('部门已删除', 'success')
+        return redirect(url_for('list_departments'))
+
+    # 员工管理路由
+    @app.route('/employees')
+    def list_employees():
+        employees = Employee.query.order_by(Employee.name).all()
+        departments = {d.id: d.name for d in Department.query.all()}
+        return render_template('employee/list.html', employees=employees, departments=departments)
+
+    @app.route('/employees/create', methods=['GET', 'POST'])
+    def create_employee():
+        if request.method == 'POST':
+            employee_id = request.form['employee_id']
+            name = request.form['name']
+            department_id = request.form['department_id']
+            position = request.form.get('position', '')
+            from datetime import datetime
+            
+            hire_date_str = request.form.get('hire_date')
+            phone = request.form.get('phone', '')
+            email = request.form.get('email', '')
+            status = request.form.get('status', 'active')
+            
+            if Employee.query.filter_by(employee_id=employee_id).first():
+                flash('员工ID已存在', 'danger')
+                return redirect(url_for('create_employee'))
+                
+            # 转换日期字符串为date对象
+            hire_date = datetime.strptime(hire_date_str, '%Y-%m-%d').date() if hire_date_str else None
+                
+            employee = Employee(
+                employee_id=employee_id,
+                name=name,
+                department_id=department_id,
+                position=position,
+                hire_date=hire_date,
+                phone=phone,
+                email=email,
+                status=status
+            )
+            db.session.add(employee)
+            db.session.commit()
+            flash('员工创建成功', 'success')
+            return redirect(url_for('list_employees'))
+            
+        departments = Department.query.order_by(Department.name).all()
+        return render_template('employee/create.html', departments=departments)
+
+    @app.route('/employees/<int:id>/edit', methods=['GET', 'POST'])
+    def edit_employee(id):
+        employee = Employee.query.get_or_404(id)
+        if request.method == 'POST':
+            employee.employee_id = request.form['employee_id']
+            employee.name = request.form['name']
+            employee.department_id = request.form['department_id']
+            employee.position = request.form.get('position', '')
+            from datetime import datetime
+            
+            hire_date_str = request.form.get('hire_date')
+            # 转换日期字符串为date对象
+            employee.hire_date = datetime.strptime(hire_date_str, '%Y-%m-%d').date() if hire_date_str else None
+            employee.phone = request.form.get('phone', '')
+            employee.email = request.form.get('email', '')
+            employee.status = request.form.get('status', 'active')
+            db.session.commit()
+            flash('员工信息已更新', 'success')
+            return redirect(url_for('list_employees'))
+        departments = Department.query.order_by(Department.name).all()
+        return render_template('employee/edit.html', employee=employee, departments=departments)
+
+    @app.route('/employees/<int:id>/delete', methods=['POST'])
+    def delete_employee(id):
+        employee = Employee.query.get_or_404(id)
+        db.session.delete(employee)
+        db.session.commit()
+        flash('员工已删除', 'success')
+        return redirect(url_for('list_employees'))
+
+    @app.route('/test/employee')
+    def test_employee():
+        try:
+            # 检查Employee表是否存在
+            from sqlalchemy import inspect
+            inspector = inspect(db.engine)
+            tables = inspector.get_table_names()
+            
+            if 'employee' not in tables:
+                return jsonify({
+                    'status': 'error',
+                    'message': 'Employee表不存在',
+                    'tables': tables
+                })
+            
+            # 测试创建员工
+            test_emp = Employee(
+                employee_id='TEST001',
+                name='测试员工',
+                department_id=1,
+                position='测试职位'
+            )
+            db.session.add(test_emp)
+            db.session.commit()
+            
+            # 测试查询
+            emp = Employee.query.filter_by(employee_id='TEST001').first()
+            if emp:
+                return jsonify({
+                    'status': 'success',
+                    'message': 'Employee模型测试通过',
+                    'data': {
+                        'id': emp.id,
+                        'name': emp.name,
+                        'position': emp.position
+                    }
+                })
+            return jsonify({'status': 'error', 'message': 'Employee查询失败'})
+        except Exception as e:
+            return jsonify({'status': 'error', 'message': str(e)})
