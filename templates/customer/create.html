@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% from "customer/_form.html" import customer_form %}
+
+{% block title %}新增客户{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>新增客户</h2>
+    {{ customer_form(url_for('customer.create'), companies=companies) }}
+</div>
+{% endblock %}

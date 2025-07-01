@@ -4,6 +4,15 @@
 <div class="container mt-4">
     <h2>新增部门</h2>
     <form method="POST" action="{{ url_for('create_department') }}">
+        <div class="form-group mb-3">
+            <label for="company_id">所属公司</label>
+            <select class="form-control" id="company_id" name="company_id" required>
+                <option value="">请选择公司</option>
+                {% for company in companies %}
+                <option value="{{ company.id }}">{{ company.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
         <div class="form-group">
             <label for="code">部门编码</label>
             <input type="text" class="form-control" id="code" name="code" required>

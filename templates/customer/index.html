@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}客户管理{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>客户列表</h2>
+    <div class="mb-3">
+        <a href="{{ url_for('customer.create') }}" class="btn btn-primary">新增客户</a>
+    </div>
+    
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>客户编码</th>
+                <th>客户名称</th>
+                <th>联系人</th>
+                <th>电话</th>
+                <th>状态</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for customer in customers %}
+            <tr>
+                <td>{{ customer.customer_code }}</td>
+                <td>{{ customer.name }}</td>
+                <td>{{ customer.contact_person or '-' }}</td>
+                <td>{{ customer.phone or '-' }}</td>
+                <td>
+                    <span class="badge bg-{{ 'success' if customer.status == 'active' else 'secondary' }}">
+                        {{ '活跃' if customer.status == 'active' else '停用' }}
+                    </span>
+                </td>
+                <td>
+                    <a href="{{ url_for('customer.edit', id=customer.id) }}" class="btn btn-sm btn-outline-primary">编辑</a>
+                    <form action="{{ url_for('customer.delete', id=customer.id) }}" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-sm btn-outline-danger" 
+                                onclick="return confirm('确定要删除该客户吗？')">删除</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

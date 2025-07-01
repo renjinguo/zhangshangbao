@@ -1,5 +1,5 @@
 from flask import render_template, request, redirect, url_for, flash, jsonify, session, current_app
-from .models import db, User, Message, Department, Material, Employee
+from .models import db, User, Message, Department, Material, Employee, Company
 import os
 from werkzeug.utils import secure_filename
 import re
@@ -120,7 +120,7 @@ def init_app(app):
         # 统计每个联系人发给当前用户的未读消息数（只统计未读，chat_with已读后刷新chat才会消失）
         unread_counts = {}
         for c in contacts:
-            count = Message.query.filter_by(sender_id=c.id, receiver_id=current_id, is_read=False).count()
+            count = Message.query.filter_by(sender_id=c.id, receiver_id=current_id, status='unread').count()
             unread_counts[c.id] = count
         return render_template('chat.html', contacts=contacts, current_user_id=current_id, unread_counts=unread_counts)
 
@@ -158,16 +158,16 @@ def init_app(app):
         messages = Message.query.filter(
             ((Message.sender_id==current_id) & (Message.receiver_id==contact_id)) |
             ((Message.sender_id==contact_id) & (Message.receiver_id==current_id))
-        ).order_by(Message.timestamp).all()
+        ).order_by(Message.created_at).all()
         # 只将当前聊天对象发给当前用户的未读消息标记为已读
-        unread_msgs = Message.query.filter_by(sender_id=contact_id, receiver_id=current_id, is_read=False).all()
+        unread_msgs = Message.query.filter_by(sender_id=contact_id, receiver_id=current_id, status='unread').all()
         for m in unread_msgs:
-            m.is_read = True
+            m.status = 'read'
         db.session.commit()
         # 统计每个联系人发给当前用户的未读消息数（用于侧边栏角标）
         unread_counts = {}
         for c in contacts:
-            count = Message.query.filter_by(sender_id=c.id, receiver_id=current_id, is_read=False).count()
+            count = Message.query.filter_by(sender_id=c.id, receiver_id=current_id, status='unread').count()
             unread_counts[c.id] = count
         return render_template('chat_with.html', contacts=contacts, target=target, messages=messages, sender_id=current_id, unread_counts=unread_counts)
 
@@ -186,36 +186,39 @@ def init_app(app):
 
     @app.route('/departments/create', methods=['GET', 'POST'])
     def create_department():
+        from .models import Company
+        companies = Company.query.order_by(Company.name).all()
         if request.method == 'POST':
             code = request.form['code']
             name = request.form['name']
             manager = request.form.get('manager', '')
             phone = request.form.get('phone', '')
-            
+            company_id = request.form.get('company_id')
             if Department.query.filter_by(code=code).first():
                 flash('部门编码已存在', 'danger')
                 return redirect(url_for('create_department'))
-                
-            department = Department(code=code, name=name, manager=manager, phone=phone)
+            department = Department(code=code, name=name, manager=manager, phone=phone, company_id=company_id)
             db.session.add(department)
             db.session.commit()
             flash('部门创建成功', 'success')
             return redirect(url_for('list_departments'))
-            
-        return render_template('department/create.html')
+        return render_template('department/create.html', companies=companies)
 
     @app.route('/departments/<int:id>/edit', methods=['GET', 'POST'])
     def edit_department(id):
+        from .models import Company
         department = Department.query.get_or_404(id)
+        companies = Company.query.order_by(Company.name).all()
         if request.method == 'POST':
             department.code = request.form['code']
             department.name = request.form['name']
             department.manager = request.form.get('manager', '')
             department.phone = request.form.get('phone', '')
+            department.company_id = request.form.get('company_id')
             db.session.commit()
             flash('部门信息已更新', 'success')
             return redirect(url_for('list_departments'))
-        return render_template('department/edit.html', department=department)
+        return render_template('department/edit.html', department=department, companies=companies)
 
     @app.route('/departments/<int:id>/delete', methods=['POST'])
     def delete_department(id):
@@ -234,25 +237,21 @@ def init_app(app):
 
     @app.route('/employees/create', methods=['GET', 'POST'])
     def create_employee():
+        from .models import Company
         if request.method == 'POST':
             employee_id = request.form['employee_id']
             name = request.form['name']
             department_id = request.form['department_id']
             position = request.form.get('position', '')
             from datetime import datetime
-            
             hire_date_str = request.form.get('hire_date')
             phone = request.form.get('phone', '')
             email = request.form.get('email', '')
             status = request.form.get('status', 'active')
-            
             if Employee.query.filter_by(employee_id=employee_id).first():
                 flash('员工ID已存在', 'danger')
                 return redirect(url_for('create_employee'))
-                
-            # 转换日期字符串为date对象
             hire_date = datetime.strptime(hire_date_str, '%Y-%m-%d').date() if hire_date_str else None
-                
             employee = Employee(
                 employee_id=employee_id,
                 name=name,
@@ -267,9 +266,9 @@ def init_app(app):
             db.session.commit()
             flash('员工创建成功', 'success')
             return redirect(url_for('list_employees'))
-            
         departments = Department.query.order_by(Department.name).all()
-        return render_template('employee/create.html', departments=departments)
+        companies = Company.query.order_by(Company.name).all()
+        return render_template('employee/create.html', departments=departments, companies=companies)
 
     @app.route('/employees/<int:id>/edit', methods=['GET', 'POST'])
     def edit_employee(id):
@@ -280,7 +279,6 @@ def init_app(app):
             employee.department_id = request.form['department_id']
             employee.position = request.form.get('position', '')
             from datetime import datetime
-            
             hire_date_str = request.form.get('hire_date')
             # 转换日期字符串为date对象
             employee.hire_date = datetime.strptime(hire_date_str, '%Y-%m-%d').date() if hire_date_str else None
@@ -300,6 +298,50 @@ def init_app(app):
         db.session.commit()
         flash('员工已删除', 'success')
         return redirect(url_for('list_employees'))
+
+    # 公司主数据CRUD
+    @app.route('/companies')
+    def list_companies():
+        companies = Company.query.order_by(Company.code).all()
+        return render_template('company/list.html', companies=companies)
+
+    @app.route('/companies/create', methods=['GET', 'POST'])
+    def create_company():
+        if request.method == 'POST':
+            code = request.form['code']
+            name = request.form['name']
+            address = request.form.get('address', '')
+            phone = request.form.get('phone', '')
+            if Company.query.filter_by(code=code).first():
+                flash('公司编码已存在', 'danger')
+                return redirect(url_for('create_company'))
+            company = Company(code=code, name=name, address=address, phone=phone)
+            db.session.add(company)
+            db.session.commit()
+            flash('公司创建成功', 'success')
+            return redirect(url_for('list_companies'))
+        return render_template('company/create.html')
+
+    @app.route('/companies/<int:id>/edit', methods=['GET', 'POST'])
+    def edit_company(id):
+        company = Company.query.get(id)
+        if request.method == 'POST':
+            company.code = request.form['code']
+            company.name = request.form['name']
+            company.address = request.form.get('address', '')
+            company.phone = request.form.get('phone', '')
+            db.session.commit()
+            flash('公司信息已更新', 'success')
+            return redirect(url_for('list_companies'))
+        return render_template('company/edit.html', company=company)
+
+    @app.route('/companies/<int:id>/delete', methods=['POST'])
+    def delete_company(id):
+        company = Company.query.get(id)
+        db.session.delete(company)
+        db.session.commit()
+        flash('公司已删除', 'success')
+        return redirect(url_for('list_companies'))
 
     @app.route('/test/employee')
     def test_employee():

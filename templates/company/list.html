@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}公司主数据 - 掌上宝{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="fw-bold text-primary">公司主数据</h2>
+    <a href="{{ url_for('create_company') }}" class="btn btn-success rounded-pill px-4 fw-semibold shadow-sm">
+        <i class="bi bi-plus"></i> 新建公司
+    </a>
+</div>
+<div class="table-responsive">
+<table class="table table-hover align-middle">
+    <thead class="table-light">
+        <tr>
+            <th>公司编码</th>
+            <th>公司名称</th>
+            <th>地址</th>
+            <th>电话</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for c in companies %}
+        <tr>
+            <td>{{ c.code }}</td>
+            <td>{{ c.name }}</td>
+            <td>{{ c.address }}</td>
+            <td>{{ c.phone }}</td>
+            <td>
+                <a href="{{ url_for('edit_company', id=c.id) }}" class="btn btn-sm btn-primary rounded-pill px-3 fw-semibold">编辑</a>
+                <form action="{{ url_for('delete_company', id=c.id) }}" method="post" class="d-inline" onsubmit="return confirm('确定要删除该公司吗？');">
+                    <button type="submit" class="btn btn-sm btn-danger rounded-pill px-3 fw-semibold">删除</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+{% if not companies %}
+<p class="text-muted">暂无公司数据。</p>
+{% endif %}
+{% endblock %}

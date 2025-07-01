@@ -10,18 +10,26 @@
             <tr>
                 <th>编码</th>
                 <th>名称</th>
+                <th>分类</th>
                 <th>规格</th>
                 <th>单位</th>
+                <th>采购价</th>
+                <th>销售价</th>
+                <th>库存</th>
                 <th>操作</th>
             </tr>
         </thead>
         <tbody>
             {% for material in materials %}
             <tr>
-                <td>{{ material.code }}</td>
+                <td>{{ material.material_code }}</td>
                 <td>{{ material.name }}</td>
-                <td>{{ material.spec }}</td>
+                <td>{{ material.category }}</td>
+                <td>{{ material.specification }}</td>
                 <td>{{ material.unit }}</td>
+                <td>{{ material.purchase_price }}</td>
+                <td>{{ material.sales_price }}</td>
+                <td>{{ material.stock }}</td>
                 <td>
                     <a href="{{ url_for('material.edit_material', id=material.id) }}" class="btn btn-sm btn-warning">编辑</a>
                     <form action="{{ url_for('material.delete_material', id=material.id) }}" method="POST" style="display: inline;">

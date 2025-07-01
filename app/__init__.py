@@ -25,6 +25,12 @@ def create_app():
     # 注册蓝图
     from .views.material_views import material_bp
     app.register_blueprint(material_bp, url_prefix='/material')
+    
+    from .customer.routes import bp as customer_bp
+    app.register_blueprint(customer_bp, url_prefix='/customer')
+
+    from .supplier.routes import bp as supplier_bp
+    app.register_blueprint(supplier_bp, url_prefix='/supplier')
 
     # 导入路由
     from . import routes

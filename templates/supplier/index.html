@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}供应商主数据{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <h2>供应商列表</h2>
+    <div class="mb-3">
+        <a href="{{ url_for('supplier.create') }}" class="btn btn-primary">新增供应商</a>
+    </div>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>编码</th>
+                <th>名称</th>
+                <th>联系人</th>
+                <th>电话</th>
+                <th>状态</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for s in suppliers %}
+            <tr>
+                <td>{{ s.supplier_code }}</td>
+                <td>{{ s.name }}</td>
+                <td>{{ s.contact_person or '-' }}</td>
+                <td>{{ s.phone or '-' }}</td>
+                <td>
+                    <span class="badge bg-{{ 'success' if s.status == 'active' else 'secondary' }}">
+                        {{ '活跃' if s.status == 'active' else '停用' }}
+                    </span>
+                </td>
+                <td>
+                    <a href="{{ url_for('supplier.edit', id=s.id) }}" class="btn btn-sm btn-outline-primary">编辑</a>
+                    <form action="{{ url_for('supplier.delete', id=s.id) }}" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('确定要删除该供应商吗？')">删除</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

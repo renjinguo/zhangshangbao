@@ -1,0 +1,49 @@
+{% macro supplier_form(form_action, supplier=None, companies=None) %}
+<form method="post" action="{{ form_action }}">
+    <div class="mb-3">
+        <label for="supplier_code" class="form-label">供应商编码*</label>
+        <input type="text" class="form-control" id="supplier_code" name="supplier_code" value="{{ supplier.supplier_code if supplier else '' }}" required>
+    </div>
+    <div class="mb-3">
+        <label for="name" class="form-label">供应商名称*</label>
+        <input type="text" class="form-control" id="name" name="name" value="{{ supplier.name if supplier else '' }}" required>
+    </div>
+    <div class="mb-3">
+        <label for="company_id" class="form-label">所属公司*</label>
+        <select class="form-select" id="company_id" name="company_id" required>
+            <option value="">请选择公司</option>
+            {% for c in companies %}
+            <option value="{{ c.id }}" {% if supplier and supplier.company_id == c.id %}selected{% endif %}>{{ c.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="mb-3">
+        <label for="contact_person" class="form-label">联系人</label>
+        <input type="text" class="form-control" id="contact_person" name="contact_person" value="{{ supplier.contact_person if supplier else '' }}">
+    </div>
+    <div class="mb-3">
+        <label for="phone" class="form-label">电话</label>
+        <input type="tel" class="form-control" id="phone" name="phone" value="{{ supplier.phone if supplier else '' }}">
+    </div>
+    <div class="mb-3">
+        <label for="email" class="form-label">邮箱</label>
+        <input type="email" class="form-control" id="email" name="email" value="{{ supplier.email if supplier else '' }}">
+    </div>
+    <div class="mb-3">
+        <label for="address" class="form-label">地址</label>
+        <textarea class="form-control" id="address" name="address" rows="2">{{ supplier.address if supplier else '' }}</textarea>
+    </div>
+    <div class="mb-3">
+        <label for="tax_id" class="form-label">税号</label>
+        <input type="text" class="form-control" id="tax_id" name="tax_id" value="{{ supplier.tax_id if supplier else '' }}">
+    </div>
+    <div class="mb-3">
+        <label for="status" class="form-label">状态</label>
+        <select class="form-select" id="status" name="status">
+            <option value="active" {% if not supplier or supplier.status == 'active' %}selected{% endif %}>活跃</option>
+            <option value="inactive" {% if supplier and supplier.status == 'inactive' %}selected{% endif %}>停用</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">保存</button>
+</form>
+{% endmacro %}

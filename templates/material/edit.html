@@ -5,20 +5,36 @@
     <h2>编辑物料</h2>
     <form method="POST" action="{{ url_for('material.edit_material', id=material.id) }}">
         <div class="form-group">
-            <label for="code">物料编码</label>
-            <input type="text" class="form-control" id="code" name="code" value="{{ material.code }}" required>
+            <label for="code">物料编码*</label>
+            <input type="text" class="form-control" id="code" name="code" value="{{ material.material_code }}" required>
         </div>
         <div class="form-group">
-            <label for="name">物料名称</label>
+            <label for="name">物料名称*</label>
             <input type="text" class="form-control" id="name" name="name" value="{{ material.name }}" required>
         </div>
         <div class="form-group">
-            <label for="spec">规格型号</label>
-            <input type="text" class="form-control" id="spec" name="spec" value="{{ material.spec }}">
+            <label for="category">分类</label>
+            <input type="text" class="form-control" id="category" name="category" value="{{ material.category }}">
+        </div>
+        <div class="form-group">
+            <label for="specification">规格型号</label>
+            <input type="text" class="form-control" id="specification" name="spec" value="{{ material.specification }}">
         </div>
         <div class="form-group">
             <label for="unit">单位</label>
             <input type="text" class="form-control" id="unit" name="unit" value="{{ material.unit }}">
+        </div>
+        <div class="form-group">
+            <label for="purchase_price">采购价</label>
+            <input type="number" step="0.01" class="form-control" id="purchase_price" name="purchase_price" value="{{ material.purchase_price }}">
+        </div>
+        <div class="form-group">
+            <label for="sales_price">销售价</label>
+            <input type="number" step="0.01" class="form-control" id="sales_price" name="sales_price" value="{{ material.sales_price }}">
+        </div>
+        <div class="form-group">
+            <label for="stock">库存数量</label>
+            <input type="number" class="form-control" id="stock" name="stock" value="{{ material.stock }}">
         </div>
         <button type="submit" class="btn btn-primary">保存</button>
         <a href="{{ url_for('material.list_materials') }}" class="btn btn-secondary">取消</a>

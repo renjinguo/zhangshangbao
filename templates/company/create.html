@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}新建公司 - 掌上宝{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <h2 class="fw-bold text-primary mb-4">新建公司</h2>
+    <form method="post">
+        <div class="mb-3">
+            <label for="code" class="form-label">公司编码</label>
+            <input type="text" class="form-control" id="code" name="code" required>
+        </div>
+        <div class="mb-3">
+            <label for="name" class="form-label">公司名称</label>
+            <input type="text" class="form-control" id="name" name="name" required>
+        </div>
+        <div class="mb-3">
+            <label for="address" class="form-label">地址</label>
+            <input type="text" class="form-control" id="address" name="address">
+        </div>
+        <div class="mb-3">
+            <label for="phone" class="form-label">电话</label>
+            <input type="text" class="form-control" id="phone" name="phone">
+        </div>
+        <button type="submit" class="btn btn-primary">保存</button>
+        <a href="{{ url_for('list_companies') }}" class="btn btn-secondary ms-2">返回</a>
+    </form>
+</div>
+{% endblock %}

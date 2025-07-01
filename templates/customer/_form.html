@@ -1,0 +1,73 @@
+{% macro customer_form(form_action, customer=None, companies=None) %}
+<form method="post" action="{{ form_action }}">
+    <div class="mb-3">
+        <label for="customer_code" class="form-label">客户编码*</label>
+        <input type="text" class="form-control" id="customer_code" name="customer_code" 
+               value="{{ customer.customer_code if customer else '' }}" required>
+    </div>
+    
+    <div class="mb-3">
+        <label for="name" class="form-label">客户名称*</label>
+        <input type="text" class="form-control" id="name" name="name" 
+               value="{{ customer.name if customer else '' }}" required>
+    </div>
+    
+    <div class="mb-3">
+        <label for="company_id" class="form-label">所属公司*</label>
+        <select class="form-select" id="company_id" name="company_id" required>
+            <option value="">请选择公司</option>
+            {% for c in companies %}
+            <option value="{{ c.id }}" {% if customer and customer.company_id == c.id %}selected{% endif %}>{{ c.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    
+    <div class="mb-3">
+        <label for="category" class="form-label">客户类型</label>
+        <select class="form-select" id="category" name="category">
+            <option value="个人" {% if customer and customer.category == '个人' %}selected{% endif %}>个人</option>
+            <option value="企业" {% if customer and customer.category == '企业' %}selected{% endif %}>企业</option>
+        </select>
+    </div>
+    
+    <div class="mb-3">
+        <label for="contact_person" class="form-label">联系人</label>
+        <input type="text" class="form-control" id="contact_person" name="contact_person" 
+               value="{{ customer.contact_person if customer else '' }}">
+    </div>
+    
+    <div class="mb-3">
+        <label for="phone" class="form-label">电话</label>
+        <input type="tel" class="form-control" id="phone" name="phone" 
+               value="{{ customer.phone if customer else '' }}">
+    </div>
+    
+    <div class="mb-3">
+        <label for="email" class="form-label">邮箱</label>
+        <input type="email" class="form-control" id="email" name="email" 
+               value="{{ customer.email if customer else '' }}">
+    </div>
+    
+    <div class="mb-3">
+        <label for="address" class="form-label">地址</label>
+        <textarea class="form-control" id="address" name="address" rows="2">{{ customer.address if customer else '' }}</textarea>
+    </div>
+    
+    <div class="mb-3">
+        <label for="tax_id" class="form-label">税号</label>
+        <input type="text" class="form-control" id="tax_id" name="tax_id" 
+               value="{{ customer.tax_id if customer else '' }}">
+    </div>
+    
+    <div class="mb-3">
+        <label for="status" class="form-label">状态</label>
+        <select class="form-select" id="status" name="status">
+            <option value="active" {% if not customer or customer.status == 'active' %}selected{% endif %}>活跃</option>
+            <option value="inactive" {% if customer and customer.status == 'inactive' %}selected{% endif %}>停用</option>
+        </select>
+    </div>
+    
+    <button type="submit" class="btn btn-primary">保存</button>
+    <a href="{{ url_for('customer.index') }}" class="btn btn-secondary">取消</a>
+</form>
+{% endmacro %}

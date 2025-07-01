@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% from "supplier/_form.html" import supplier_form %}
+
+{% block title %}新增供应商{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>新增供应商</h2>
+    {{ supplier_form(url_for('supplier.create'), companies=companies) }}
+</div>
+{% endblock %}

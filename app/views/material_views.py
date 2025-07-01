@@ -12,12 +12,25 @@ def list_materials():
 @material_bp.route('/create', methods=['GET', 'POST'])
 def create_material():
     if request.method == 'POST':
-        code = request.form['code']
+        material_code = request.form['code']
         name = request.form['name']
-        spec = request.form['spec']
+        specification = request.form['spec']
         unit = request.form['unit']
+        category = request.form.get('category', '')
+        purchase_price = float(request.form.get('purchase_price', 0))
+        sales_price = float(request.form.get('sales_price', 0))
+        stock = int(request.form.get('stock', 0))
         
-        material = Material(code=code, name=name, spec=spec, unit=unit)
+        material = Material(
+            material_code=material_code,
+            name=name,
+            specification=specification,
+            unit=unit,
+            category=category,
+            purchase_price=purchase_price,
+            sales_price=sales_price,
+            stock=stock
+        )
         db.session.add(material)
         db.session.commit()
         flash('物料创建成功', 'success')
@@ -29,10 +42,14 @@ def create_material():
 def edit_material(id):
     material = Material.query.get_or_404(id)
     if request.method == 'POST':
-        material.code = request.form['code']
+        material.material_code = request.form['code']
         material.name = request.form['name']
-        material.spec = request.form['spec']
+        material.specification = request.form['spec']
         material.unit = request.form['unit']
+        material.category = request.form.get('category', '')
+        material.purchase_price = float(request.form.get('purchase_price', 0))
+        material.sales_price = float(request.form.get('sales_price', 0))
+        material.stock = int(request.form.get('stock', 0))
         
         db.session.commit()
         flash('物料更新成功', 'success')
