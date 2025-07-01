@@ -1,8 +1,22 @@
+"""
+客户管理模块 (Customer Management Module)
+
+本模块提供客户信息的完整管理功能，包括客户的创建、查看、编辑和删除操作。
+所有操作都通过Flask Blueprint实现，前缀为'/customer'。
+
+包含的路由:
+- / : 显示所有客户列表，按客户编码排序
+- /create : 创建新客户，支持GET(显示表单)和POST(提交数据)请求
+- /<id>/edit : 编辑现有客户信息，支持GET(显示表单)和POST(提交数据)请求
+- /<id>/delete : 删除客户信息，仅支持POST请求
+
+客户信息包括：客户编码、名称、类别、联系人、电话、邮箱、地址、税号、状态和所属公司等重要属性。
+本模块确保客户编码的唯一性，并提供适当的用户反馈信息。
+"""
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from app.models import Customer
 from app import db
 from datetime import datetime
-
 bp = Blueprint('customer', __name__, url_prefix='/customer')
 
 @bp.route('/')

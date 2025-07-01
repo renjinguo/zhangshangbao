@@ -1,3 +1,47 @@
+"""
+路由模块 - 企业管理系统的Web路由实现
+
+本模块包含整个企业管理系统的所有Flask路由和功能，主要包括:
+
+1. 用户认证与会话管理
+   - 登录(/login): 用户登录系统
+   - 登出(/logout): 用户注销
+
+2. 联系人管理
+   - 联系人列表(/contacts): 显示所有联系人
+   - 添加联系人(/contacts/add): 创建新联系人
+   - 编辑联系人(/contacts/edit/<id>): 更新联系人信息
+   - 删除联系人(/contacts/delete/<id>): 删除指定联系人
+
+3. 聊天和消息系统
+   - 聊天界面(/chat): 显示聊天主页面和联系人列表
+   - 与联系人聊天(/chat/<id>): 与特定联系人的聊天界面
+   - 撤回消息(/chat/recall/<id>): 撤回已发送的消息
+
+4. 部门管理
+   - 部门列表(/departments): 显示所有部门
+   - 创建部门(/departments/create): 添加新部门
+   - 编辑部门(/departments/<id>/edit): 更新部门信息
+   - 删除部门(/departments/<id>/delete): 删除指定部门
+
+5. 员工管理
+   - 员工列表(/employees): 显示所有员工
+   - 添加员工(/employees/create): 创建新员工
+   - 编辑员工(/employees/<id>/edit): 更新员工信息
+   - 删除员工(/employees/<id>/delete): 删除指定员工
+
+6. 公司主数据管理
+   - 公司列表(/companies): 显示所有公司
+   - 添加公司(/companies/create): 创建新公司
+   - 编辑公司(/companies/<id>/edit): 更新公司信息
+   - 删除公司(/companies/<id>/delete): 删除指定公司
+
+7. 系统初始化
+   - init_app函数用于初始化数据库和创建默认用户
+
+该模块还包括文件上传处理、全局上下文处理以及各种辅助功能。
+"""
+
 from flask import render_template, request, redirect, url_for, flash, jsonify, session, current_app
 from .models import db, User, Message, Department, Material, Employee, Company
 import os

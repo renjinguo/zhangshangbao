@@ -1,3 +1,17 @@
+"""
+供应商管理模块 (Supplier Management Module)
+
+该模块提供了对供应商信息的全面管理功能，包括创建、查看、编辑和删除供应商记录。
+
+包含的路由:
+- / : 显示所有供应商列表
+- /create : 创建新供应商（GET显示表单，POST处理提交）
+- /<id>/edit : 编辑现有供应商信息（GET显示表单，POST处理更新）
+- /<id>/delete : 删除供应商记录（仅POST方法）
+
+供应商信息包括：供应商编码、名称、联系人、电话、电子邮件、地址、
+税号、状态以及关联的公司ID等基本信息。
+"""
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from app.models import Supplier
 from app import db

@@ -1,3 +1,21 @@
+"""
+物料管理模块视图 (Material Management Views)
+
+该模块提供物料管理的所有视图函数，处理物料的创建、查询、更新和删除操作(CRUD)。
+
+路由包括:
+- GET  /material/          : 列出所有物料
+- GET  /material/create    : 显示物料创建表单
+- POST /material/create    : 处理物料创建请求
+- GET  /material/edit/<id> : 显示物料编辑表单
+- POST /material/edit/<id> : 处理物料更新请求
+- POST /material/delete/<id>: 处理物料删除请求
+
+与其他模块关系:
+- 依赖于models模块中的Material模型
+- 使用主应用中的db对象进行数据库操作
+- 通过Blueprint集成到主应用程序中
+"""
 from flask import render_template, request, redirect, url_for, flash, Blueprint
 from .. import db
 from ..models import Material
